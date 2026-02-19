@@ -63,7 +63,7 @@ Implémentation d'un modèle de régression linéaire pour prédire les prix des
 
 ## 🚀 Déploiement
 
-L'application est conteneurisée avec **Docker**. Se référer au `Dockerfile` et `docker-compose.yml` pour le déploiement.
+L'application est conteneurisée avec **Docker**. Se référer au `Dockerfile` pour le déploiement.
 
 ---
 
