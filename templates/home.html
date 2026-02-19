@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>California Housing Price Prediction</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C87A;
+      --dark: #0D0D0D;
+      --dark-2: #161616;
+      --dark-3: #1F1F1F;
+      --border: rgba(201, 168, 76, 0.2);
+      --text: #E8E0D0;
+      --text-muted: #7A7060;
+    }
+
+    body {
+      background-color: var(--dark);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(201,168,76,0.08) 0%, transparent 70%),
+        repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(201,168,76,0.02) 80px, rgba(201,168,76,0.02) 81px),
+        repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(201,168,76,0.02) 80px, rgba(201,168,76,0.02) 81px);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .header .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .header .eyebrow::before,
+    .header .eyebrow::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+
+    .header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .header h1 em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    .header p {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
+    /* Card */
+    .card {
+      background: var(--dark-2);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .field:nth-child(1)  { animation-delay: 0.05s; }
+    .field:nth-child(2)  { animation-delay: 0.10s; }
+    .field:nth-child(3)  { animation-delay: 0.15s; }
+    .field:nth-child(4)  { animation-delay: 0.20s; }
+    .field:nth-child(5)  { animation-delay: 0.25s; }
+    .field:nth-child(6)  { animation-delay: 0.30s; }
+    .field:nth-child(7)  { animation-delay: 0.35s; }
+    .field:nth-child(8)  { animation-delay: 0.40s; }
+
+    label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    label .hint {
+      font-size: 10px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: rgba(122,112,96,0.6);
+      font-weight: 300;
+    }
+
+    input {
+      background: var(--dark-3);
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 2px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      width: 100%;
+    }
+
+    input::placeholder { color: rgba(122,112,96,0.5); }
+
+    input:focus {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.04);
+    }
+
+    input:focus + .field-glow { opacity: 1; }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 32px 0;
+    }
+
+    /* Submit */
+    button[type="submit"] {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.25s, color 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button[type="submit"]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+      z-index: 0;
+    }
+
+    button[type="submit"] span {
+      position: relative;
+      z-index: 1;
+    }
+
+    button[type="submit"]:hover::after { transform: scaleX(1); }
+    button[type="submit"]:hover { color: var(--dark); }
+
+    /* Result */
+    .result {
+      margin-top: 32px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: rgba(201,168,76,0.04);
+      text-align: center;
+      display: none;
+    }
+
+    .result.show { display: block; animation: fadeUp 0.4s ease; }
+
+    .result .label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .result .price {
+      font-family: 'DM Serif Display', serif;
+      font-size: 36px;
+      color: var(--gold-light);
+    }
+
+    /* prediction_text from Flask */
+    .prediction-text {
+      margin-top: 32px;
+      padding: 20px 24px;
+      border-left: 2px solid var(--gold);
+      background: rgba(201,168,76,0.04);
+      font-size: 15px;
+      color: var(--gold-light);
+      font-family: 'DM Serif Display', serif;
+    }
+
+    @media (max-width: 540px) {
+      .grid { grid-template-columns: 1fr; }
+      .card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="eyebrow">ML Model</div>
+    <h1>California Housing<br><em>Price Prediction</em></h1>
+    <p>Entrez les caractéristiques du logement pour obtenir une estimation</p>
+  </div>
+
+  <div class="card">
+    <form action="{{ url_for('predict') }}" method="post">
+
+      <div class="grid">
+
+        <div class="field">
+          <label>MedInc <span class="hint">Revenu médian</span></label>
+          <input type="number" step="any" name="MedInc" placeholder="ex: 8.32" required />
+        </div>
+
+        <div class="field">
+          <label>HouseAge <span class="hint">Âge médian (ans)</span></label>
+          <input type="number" step="any" name="HouseAge" placeholder="ex: 41" required />
+        </div>
+
+        <div class="field">
+          <label>AveRooms <span class="hint">Pièces / ménage</span></label>
+          <input type="number" step="any" name="AveRooms" placeholder="ex: 6.98" required />
+        </div>
+
+        <div class="field">
+          <label>AveBedrms <span class="hint">Chambres / ménage</span></label>
+          <input type="number" step="any" name="AveBedrms" placeholder="ex: 1.02" required />
+        </div>
+
+        <div class="field">
+          <label>Population <span class="hint">Population du bloc</span></label>
+          <input type="number" step="any" name="Population" placeholder="ex: 322" required />
+        </div>
+
+        <div class="field">
+          <label>AveOccup <span class="hint">Membres / ménage</span></label>
+          <input type="number" step="any" name="AveOccup" placeholder="ex: 2.55" required />
+        </div>
+
+        <div class="field">
+          <label>Latitude</label>
+          <input type="number" step="any" name="Latitude" placeholder="ex: 37.88" required />
+        </div>
+
+        <div class="field">
+          <label>Longitude</label>
+          <input type="number" step="any" name="Longitude" placeholder="ex: -122.23" required />
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+
+      <button type="submit"><span>Estimer le prix</span></button>
+
+    </form>
+
+    {% if prediction_text %}
+    <div class="prediction-text">
+      {{ prediction_text }}
+    </div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+</body>
+</html>
