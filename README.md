@@ -7,14 +7,21 @@ Implémentation d'un modèle de régression linéaire pour prédire les prix des
 ## 📁 Structure du projet
 
 ```
-├── Linear_Regression_ML_Implementation.ipynb  # Notebook d'entraînement
-├── regmodel.pkl                               # Modèle entraîné
-├── scaler.pkl                                 # StandardScaler sérialisé
-├── app.py                                     # API Flask
-├── requirements.txt                           # Dépendances Python
-├── Dockerfile                                 
-├── docker-compose.yml                         
-└── README.md
+california_House_Pricing/
+├── .github/
+│   └── workflows/
+│       └── main.yaml
+├── templates/
+│   └── home.html
+├── .gitignore
+├── Dockerfile
+├── LICENSE
+├── Linear_Regression_ML_Implementation.ipynb
+├── README.md
+├── app.py
+├── regmodel.pkl
+├── requirements.txt
+└── scaler.pkl
 ```
 
 ---
@@ -69,4 +76,4 @@ L'application est conteneurisée avec **Docker**. Se référer au `Dockerfile` p
 
 ## 🧰 Technologies
 
-- Python 3.11 · scikit-learn · pandas · numpy · matplotlib · Flask · Docker
+- Python 3.13.7 · scikit-learn · pandas · numpy · matplotlib · Flask · Docker
